@@ -1,8 +1,11 @@
-![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png) 
+<p align="center">
+  <img src="https://info.mollie.com/hubfs/github/php/logo.png" width="128" height="128"/>
+</p>
+<h1 align="center">Mollie API client for PHP</h1>
 
-# Mollie API client for PHP #
+<img src="https://info.mollie.com/hubfs/github/php/editor.png" />
 
-Accepting [iDEAL](https://www.mollie.com/ideal/), [Bancontact](https://www.mollie.com/bancontact/), [SOFORT Banking](https://www.mollie.com/sofort/), [Creditcard](https://www.mollie.com/creditcard/), [SEPA Bank transfer](https://www.mollie.com/banktransfer), [SEPA Direct debit](https://www.mollie.com/directdebit/), [Bitcoin](https://www.mollie.com/bitcoin/), [PayPal](https://www.mollie.com/paypal/), [Belfius Direct Net](https://www.mollie.com/belfiusdirectnet/), [KBC/CBC](https://www.mollie.com/kbccbc/), [paysafecard](https://www.mollie.com/paysafecard/), [ING Home'Pay](https://www.mollie.com/ing-homepay/) and [Giftcards](https://www.mollie.com/gift-cards/) online payments without fixed monthly costs or any punishing registration procedures. Just use the Mollie API to receive payments directly on your website or easily refund transactions to your customers.
+Accepting [iDEAL](https://www.mollie.com/payments/ideal/), [Apple Pay](https://www.mollie.com/payments/apple-pay), [Bancontact](https://www.mollie.com/payments/bancontact/), [SOFORT Banking](https://www.mollie.com/payments/sofort/), [Creditcard](https://www.mollie.com/payments/credit-card/), [SEPA Bank transfer](https://www.mollie.com/payments/bank-transfer/), [SEPA Direct debit](https://www.mollie.com/payments/direct-debit/), [PayPal](https://www.mollie.com/payments/paypal/), [Belfius Direct Net](https://www.mollie.com/payments/belfius/), [KBC/CBC](https://www.mollie.com/payments/kbc-cbc/), [paysafecard](https://www.mollie.com/payments/paysafecard/), [ING Home'Pay](https://www.mollie.com/payments/ing-homepay/), [Giftcards](https://www.mollie.com/payments/gift-cards/), [Giropay](https://www.mollie.com/payments/giropay/), [EPS](https://www.mollie.com/payments/eps/) and [Przelewy24](https://www.mollie.com/payments/przelewy24/) online payments without fixed monthly costs or any punishing registration procedures. Just use the Mollie API to receive payments directly on your website or easily refund transactions to your customers.
 
 [![Build Status](https://travis-ci.org/mollie/mollie-api-php.png)](https://travis-ci.org/mollie/mollie-api-php)
 [![Latest Stable Version](https://poser.pugx.org/mollie/mollie-api-php/v/stable)](https://packagist.org/packages/mollie/mollie-api-php)
@@ -16,6 +19,8 @@ To use the Mollie API client, the following things are required:
 + Follow [a few steps](https://www.mollie.com/dashboard/?modal=onboarding) to enable payment methods in live mode, and let us handle the rest.
 + PHP >= 5.6
 + Up-to-date OpenSSL (or other SSL/TLS toolkit)
+
+For leveraging [Mollie Connect](https://docs.mollie.com/oauth/overview) (advanced use cases only), we recommend also installing our [OAuth2 client](https://github.com/mollie/oauth2-mollie-php).
 
 ## Composer Installation ##
 
@@ -74,14 +79,14 @@ $payment = $mollie->payments->create([
 ```
 _After creation, the payment id is available in the `$payment->id` property. You should store this id with your order._
 
-After storing the payment id you can send the customer to the checkout using the `$payment->getCheckouUrl()`.  
+After storing the payment id you can send the customer to the checkout using the `$payment->getCheckoutUrl()`.  
 
 ```php
 header("Location: " . $payment->getCheckoutUrl(), true, 303);
 ```
 _This header location should always be a GET, thus we enforce 303 http response code_
 
-For a payment create example, see [Example 1 - New Payment](https://github.com/mollie/mollie-api-php/blob/master/examples/01-new-payment.php).
+For a payment create example, see [Example - New Payment](https://github.com/mollie/mollie-api-php/blob/master/examples/payments/create-payment.php).
 
 ## Retrieving payments ##
 We can use the `$payment->id` to retrieve a payment and check if the payment `isPaid`.
@@ -101,12 +106,12 @@ Or retrieve a collection of payments.
 $payments = $mollie->payments->page(); 
 ```
 
-For an extensive example of listing payments with the details and status, see [Example 5 - Payments History](https://github.com/mollie/mollie-api-php/blob/master/examples/05-payments-history.php).
+For an extensive example of listing payments with the details and status, see [Example - List Payments](https://github.com/mollie/mollie-api-php/blob/master/examples/payments/list-payments.php).
 
 ## Payment webhook ##
 
 When the status of a payment changes the `webhookUrl` we specified in the creation of the payment will be called.  
-There we can use the `id` from our POST parameters to check te status and act upon that, see [Example 2 - Webhook verification](https://github.com/mollie/mollie-api-php/blob/master/examples/02-webhook-verification.php).
+There we can use the `id` from our POST parameters to check te status and act upon that, see [Example - Webhook](https://github.com/mollie/mollie-api-php/blob/master/examples/payments/webhook.php).
 
 
 ## Multicurrency ##
@@ -140,7 +145,7 @@ $method = $mollie->methods->get(\Mollie\Api\Types\PaymentMethod::IDEAL, ["includ
 ```
 
 _`$method->issuers` will be a list of objects. Use the property `$id` of this object in the
- API call, and the property `$name` for displaying the issuer to your customer. For a more in-depth example, see [Example 4 - iDEAL payment](https://github.com/mollie/mollie-api-php/blob/master/examples/04-ideal-payment.php)._
+ API call, and the property `$name` for displaying the issuer to your customer. For a more in-depth example, see [Example - iDEAL payment](https://github.com/mollie/mollie-api-php/blob/master/examples/payments/create-ideal-payment.php)._
 
 Create a payment with the selected issuer:
 
@@ -164,8 +169,7 @@ A short way of retrieving this URL can be achieved by using the `$payment->getCh
 ### Refunding payments ###
 
 The API also supports refunding payments. Note that there is no confirmation and that all refunds are immediate and
-definitive. Refunds are only supported for iDEAL, credit card, Bancontact, SOFORT Banking, PayPal, Belfius Direct Net, KBC/CBC, 
-ING Home'Pay and bank transfer payments. Other types of payments cannot be refunded through our API at the moment.
+definitive. refunds are supported for all methods except for paysafecard and gift cards.
 
 ```php
 $payment = $mollie->payments->get($payment->id);
@@ -179,31 +183,18 @@ $refund = $payment->refund([
 ]);
 ```
 
-For a working example, see [Example 7 - Refund payment](https://github.com/mollie/mollie-api-php/blob/master/examples/07-refund-payment.php).
+For a working example, see [Example - Refund payment](https://github.com/mollie/mollie-api-php/blob/master/examples/payments/refund-payment.php).
 
 ## API documentation ##
-If you wish to learn more about our API, please visit the [Mollie Developer Portal](https://www.mollie.com/developer/). API Documentation is available in English.
+If you wish to learn more about our API, please visit the [Mollie Developer Portal](https://www.mollie.com/developers). API Documentation is available in English.
 
 ## Want to help us make our API client even better? ##
 
-Want to help us make our API client even better? We take [pull requests](https://github.com/mollie/mollie-api-php/pulls?utf8=%E2%9C%93&q=is%3Apr), sure. But how would you like to contribute to a [technology oriented organization](https://www.mollie.com/nl/blog/post/werken-bij-mollie-als-developer/)? Mollie is hiring developers and system engineers. [Check out our vacancies](https://www.mollie.com/nl/jobs) or [get in touch](mailto:personeel@mollie.com).
+Want to help us make our API client even better? We take [pull requests](https://github.com/mollie/mollie-api-php/pulls?utf8=%E2%9C%93&q=is%3Apr), sure. But how would you like to contribute to a technology oriented organization? Mollie is hiring developers and system engineers. [Check out our vacancies](https://jobs.mollie.com/) or [get in touch](mailto:personeel@mollie.com).
 
 ## License ##
 [BSD (Berkeley Software Distribution) License](https://opensource.org/licenses/bsd-license.php).
-Copyright (c) 2013-2017, Mollie B.V.
+Copyright (c) 2013-2018, Mollie B.V.
 
 ## Support ##
 Contact: [www.mollie.com](https://www.mollie.com) — info@mollie.com — +31 20 820 20 70
-
-+ [More information about iDEAL via Mollie](https://www.mollie.com/ideal/)
-+ [More information about credit card via Mollie](https://www.mollie.com/creditcard/)
-+ [More information about Bancontact/Mister Cash via Mollie](https://www.mollie.com/mistercash/)
-+ [More information about SOFORT Banking via Mollie](https://www.mollie.com/sofort/)
-+ [More information about SEPA Bank transfer via Mollie](https://www.mollie.com/banktransfer/)
-+ [More information about SEPA Direct debit via Mollie](https://www.mollie.com/directdebit/)
-+ [More information about Bitcoin via Mollie](https://www.mollie.com/bitcoin/)
-+ [More information about PayPal via Mollie](https://www.mollie.com/paypal/)
-+ [More information about Belfius Direct Net via Mollie](https://www.mollie.com/belfiusdirectnet/)
-+ [More information about KBC/CBC via Mollie](https://www.mollie.com/kbccbc/)
-+ [More information about ING Home'Pay via Mollie](https://www.mollie.com/payments/ing-homepay)
-+ [More information about paysafecard via Mollie](https://www.mollie.com/paysafecard/)

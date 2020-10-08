@@ -41,7 +41,7 @@ class Customer extends BaseResource
     public $locale;
 
     /**
-     * @var object|mixed|null
+     * @var \stdClass|mixed|null
      */
     public $metadata;
 
@@ -56,12 +56,12 @@ class Customer extends BaseResource
     public $createdAt;
 
     /**
-     * @var object[]
+     * @var \stdClass
      */
     public $_links;
 
     /**
-     * @return BaseResource
+     * @return Customer
      */
     public function update()
     {
@@ -76,7 +76,7 @@ class Customer extends BaseResource
             "metadata" => $this->metadata,
         ));
 
-        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_POST, $this->_links->self->href, $body);
+        $result = $this->client->performHttpCallToFullUrl(MollieApiClient::HTTP_PATCH, $this->_links->self->href, $body);
 
         return ResourceFactory::createFromApiResult($result, new Customer($this->client));
     }
@@ -85,77 +85,81 @@ class Customer extends BaseResource
      * @param array $options
      * @param array $filters
      *
-     * @return object
+     * @return Payment
      */
     public function createPayment(array $options = [], array $filters = [])
     {
-        return $this->client->customerPayments->createFor($this, $options, $filters);
+        return $this->client->customerPayments->createFor($this, $this->withPresetOptions($options), $filters);
     }
 
     /**
      * Get all payments for this customer
+     *
+     * @return PaymentCollection
      */
     public function payments()
     {
-        return $this->client->customerPayments->listFor($this);
+        return $this->client->customerPayments->listFor($this, null, null, $this->getPresetOptions());
     }
 
     /**
      * @param array $options
      * @param array $filters
      *
-     * @return object
+     * @return Subscription
      */
     public function createSubscription(array $options = [], array $filters = [])
     {
-        return $this->client->subscriptions->createFor($this, $options, $filters);
+        return $this->client->subscriptions->createFor($this, $this->withPresetOptions($options), $filters);
     }
 
     /**
      * @param string $subscriptionId
      * @param array $parameters
      *
-     * @return object
+     * @return Subscription
      */
     public function getSubscription($subscriptionId, array $parameters = [])
     {
-        return $this->client->subscriptions->getFor($this, $subscriptionId, $parameters);
+        return $this->client->subscriptions->getFor($this, $subscriptionId, $this->withPresetOptions($parameters));
     }
 
     /**
      * @param string $subscriptionId
      *
-     * @return object
+     * @return null
      */
     public function cancelSubscription($subscriptionId)
     {
-        return $this->client->subscriptions->cancelFor($this, $subscriptionId);
+        return $this->client->subscriptions->cancelFor($this, $subscriptionId, $this->getPresetOptions());
     }
 
     /**
      * Get all subscriptions for this customer
+     *
+     * @return SubscriptionCollection
      */
     public function subscriptions()
     {
-        return $this->client->subscriptions->listFor($this);
+        return $this->client->subscriptions->listFor($this, null, null, $this->getPresetOptions());
     }
 
     /**
      * @param array $options
      * @param array $filters
      *
-     * @return object
+     * @return Mandate
      */
     public function createMandate(array $options = [], array $filters = [])
     {
-        return $this->client->mandates->createFor($this, $options, $filters);
+        return $this->client->mandates->createFor($this, $this->withPresetOptions($options), $filters);
     }
 
     /**
      * @param string $mandateId
      * @param array $parameters
      *
-     * @return object
+     * @return Mandate
      */
     public function getMandate($mandateId, array $parameters = [])
     {
@@ -165,18 +169,80 @@ class Customer extends BaseResource
     /**
      * @param string $mandateId
      *
-     * @return object
+     * @return null
      */
     public function revokeMandate($mandateId)
     {
-        return $this->client->mandates->revokeFor($this, $mandateId);
+        return $this->client->mandates->revokeFor($this, $mandateId, $this->getPresetOptions());
     }
 
     /**
      * Get all mandates for this customer
+     *
+     * @return MandateCollection
      */
     public function mandates()
     {
-        return $this->client->mandates->listFor($this);
+        return $this->client->mandates->listFor($this, null, null, $this->getPresetOptions());
+    }
+
+    /**
+     * Helper function to check for mandate with status valid
+     *
+     * @return bool
+     */
+    public function hasValidMandate()
+    {
+        $mandates = $this->mandates();
+        foreach ($mandates as $mandate) {
+            if ($mandate->isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Helper function to check for specific payment method mandate with status valid
+     *
+     * @return bool
+     */
+    public function hasValidMandateForMethod($method)
+    {
+        $mandates = $this->mandates();
+        foreach ($mandates as $mandate) {
+            if ($mandate->method === $method && $mandate->isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * When accessed by oAuth we want to pass the testmode by default
+     *
+     * @return array
+     */
+    private function getPresetOptions()
+    {
+        $options = [];
+        if($this->client->usesOAuth()) {
+            $options["testmode"] = $this->mode === "test" ? true : false;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Apply the preset options.
+     *
+     * @param array $options
+     * @return array
+     */
+    private function withPresetOptions(array $options)
+    {
+        return array_merge($this->getPresetOptions(), $options);
     }
 }
