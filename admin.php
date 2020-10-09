@@ -44,7 +44,14 @@ class plugins_mollie_admin extends plugins_mollie_db
 
     }
 
-
+    /**
+     * Method to override the name of the plugin in the admin menu
+     * @return string
+     */
+    public function getExtensionName()
+    {
+        return $this->template->getConfigVars('mollie_plugin');
+    }
     /**
      * Assign data to the defined variable or return the data
      * @param string $type
