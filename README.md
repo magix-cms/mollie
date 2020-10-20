@@ -1,6 +1,6 @@
 # mollie
 
-Plugin Mollie for [magixcms](http://www.magix-cms.com) 3
+Plugin Mollie for [magixcms](https://www.magix-cms.com) 3
 
 ![194](https://user-images.githubusercontent.com/356674/40827469-ed6e6242-657d-11e8-8164-5637335b26e4.png)
 
