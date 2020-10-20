@@ -29,7 +29,7 @@ class plugins_mollie_public extends plugins_mollie_db
      */
     public function __construct($t = null)
     {
-        $this->template = $t ? $t : new frontend_model_template();
+        $this->template = $t instanceof frontend_model_template ? $t : new frontend_model_template();
         $this->header = new http_header();
         $this->data = new frontend_model_data($this,$this->template);
         $this->getlang = $this->template->lang;
