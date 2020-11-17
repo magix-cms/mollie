@@ -8,20 +8,24 @@
     {case 'paid' break}
         {$msg = {#status_accept_msg#}}
         {$type = 'success'}
+        {capture name="icon"}check{/capture}
     {case 'failed' break}
         {$msg = {#status_decline_msg#}}
         {$type = 'warning'}
+        {capture name="icon"}error_outline{/capture}
     {case 'canceled' break}
         {$msg = {#status_cancel_msg#}}
         {$type = 'warning'}
+        {capture name="icon"}close{/capture}
     {case 'expired' break}
         {$msg = {#status_expired_msg#}}
         {$type = 'warning'}
+        {capture name="icon"}error_outline{/capture}
     {/switch}
     {/strip}
     <div class="container">
-        <p class="alert alert-{$type}">
-            {$msg}
+        <p class="col-sm-12 alert alert-{$type} fade in">
+            <i class="material-icons ico ico-{$smarty.capture.icon}"></i> {$msg}
         </p>
     </div>
 {/block}

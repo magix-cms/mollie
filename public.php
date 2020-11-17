@@ -13,7 +13,8 @@ class plugins_mollie_public extends plugins_mollie_db
         $settings,
         $about,
         $mollie,
-        $message;
+        $message,
+        $sanitize;
 
     public $purchase,
         $custom,
@@ -38,7 +39,6 @@ class plugins_mollie_public extends plugins_mollie_db
         //$this->header = new component_httpUtils_header($this->template);
         $this->message = new component_core_message($this->template);
         $this->mollie = new \Mollie\Api\MollieApiClient();
-        $this->mail = new frontend_model_mail($this->template,'hipay');
         $this->modelDomain = new frontend_model_domain($this->template);
         $this->about = new frontend_model_about($this->template);
         $formClean = new form_inputEscape();
@@ -70,6 +70,15 @@ class plugins_mollie_public extends plugins_mollie_db
             $array['order'] = $formClean->simpleClean($this->order);
             $this->custom = $array;
         }
+        /*$this->mail = new frontend_model_mail($this->template,'mollie','smtp',[
+            'setHost'		=> 'web-solution-way.com',
+            'setPort'		=> 25,
+            'setEncryption'	=> '',
+            'setUsername'	=> 'server@web-solution-way.com',
+            'setPassword'	=> 'Wsw123/*'
+        ]);*/
+        //@ToDo switch to this declaration when deployed online
+        $this->mail = new frontend_model_mail($this->template, 'mollie');
     }
     /**
      * Assign data to the defined variable or return the data
@@ -337,7 +346,41 @@ class plugins_mollie_public extends plugins_mollie_db
         }
         return $newData;
     }
+    /**
+     * Send a mail
+     * @param $email
+     * @param $tpl
+     * @return bool
+     */
+    protected function send_email($email, $tpl, $data, $file = false) {
+        if($email) {
+            $this->template->configLoad();
+            if(!$this->sanitize->mail($email)) {
+                $this->message->json_post_response(false,'error_mail');
+            }
+            else {
+                if($this->getlang) {
+                    $contact = new plugins_contact_public();
+                    $sender = $contact->getSender();
 
+                    if(!empty($sender) && !empty($email)) {
+                        $allowed_hosts = array_map(function($dom) { return $dom['url_domain']; },$this->modelDomain->getValidDomains());
+                        if (!isset($_SERVER['HTTP_HOST']) || !in_array($_SERVER['HTTP_HOST'], $allowed_hosts)) {
+                            header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request');
+                            exit;
+                        }
+                        $noreply = 'noreply@'.str_replace('www.','',$_SERVER['HTTP_HOST']);
+
+                        return $this->mail->send_email($email,$tpl,$data,'',$noreply,$sender['mail_sender'],$file);
+                    }
+                    else {
+                        $this->message->json_post_response(false,'error_plugin');
+                        return false;
+                    }
+                }
+            }
+        }
+    }
     /**
      *
      */
@@ -356,11 +399,38 @@ class plugins_mollie_public extends plugins_mollie_db
 
         }elseif(isset($_GET['webhook'])){
 
-            $result = $this->captureOrder(
+            $getPayment = $this->captureOrder(
                 array(
                     'debug'=>false
                 )
             );
+
+            if(isset($getPayment['status']) && $getPayment['status'] == 'paid') {
+                $result = [
+                    'amount'    =>  $getPayment['amount']->value,
+                    'currency'  =>  $getPayment['amount']->currency
+                ];
+                foreach ($getPayment['metadata'] as $key => $value){
+                    $result[$key] = $value;
+                }
+                /*$log = new debug_logger(MP_LOG_DIR);
+                $log->tracelog('start payment');
+                $log->tracelog(json_encode($result));
+                $log->tracelog('sleep');*/
+
+                if(isset($result['email'])){
+                    //$log->tracelog('email true');
+                    $about = new frontend_model_about($this->template);
+                    $collection = $about->getCompanyData();
+                    //$collection['contact']['mail']
+                    $this->send_email($result['email'], 'admin', $result);
+                    if(isset($collection['contact']['mail']) && !empty($collection['contact']['mail'])){
+                        $this->send_email($collection['contact']['mail'], 'admin', $result);
+                    }
+                }else{
+                    //$log->tracelog('email false');
+                }
+            }
 
         }elseif(isset($_GET['listmethod'])){
 
@@ -405,7 +475,7 @@ class plugins_mollie_public extends plugins_mollie_db
                     'amount' => $this->purchase['amount'],
                     'currency' => 'EUR',//$this->purchase['currency'],
                     //'order' => $this->order,
-                    'quantity' => 1,
+                    'quantity' => isset($this->custom['quantity']) ? $this->custom['quantity'] : 1,
                     'debug' => false//pre,none,printer
                 );
 

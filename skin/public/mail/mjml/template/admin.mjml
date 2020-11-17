@@ -1,0 +1,76 @@
+<mj-section>
+    <mj-column width="100%">
+        <mj-text font-weight="bold" font-size="16px" padding-bottom="0">
+            {#date_bill#} : {$smarty.now|date_format:"%d/%m/%Y"}
+        </mj-text>
+    </mj-column>
+</mj-section>
+<mj-section padding="0">
+<mj-column width="100%" padding="0">
+    <mj-divider/>
+</mj-column>
+</mj-section>
+<mj-section>
+<mj-column>
+    <mj-text mj-class="smalltitle">
+        {#mail_from#|ucfirst}
+    </mj-text>
+    <mj-text mj-class="lightext" padding-top="0">
+        {$data.firstname}&nbsp;{$data.lastname}<br/><br/>
+        {if $data.address != null}{$data.address|ucfirst}, {$data.postcode} {$data.city}<br/>{/if}
+        {if $data.phone != null}{#mail_phone#|ucfirst}&nbsp;: {$data.phone}<br/>{/if}
+        {#mail_email#|ucfirst}&nbsp;: <a href="mailto:{$data.email}">{$data.email}</a>
+    </mj-text>
+</mj-column>
+</mj-section>
+<mj-section padding="0">
+<mj-column width="100%" padding="0">
+    <mj-divider/>
+</mj-column>
+</mj-section>
+<mj-section>
+<mj-column width="100%">
+    <mj-table>
+    {$hvat = ($data.amount / 1.21)|string_format:"%.2f"}
+        <thead>
+            <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Montant Brut</th>
+                <th>TVA</th>
+                <th>Montant TVA</th>
+                <th>Montant TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+                <td>
+                    TOPCAT {if isset($data.kit) && $data.kit eq 'on'} + KIT {/if}
+                </td>
+                <td>
+                    {$data.quantity}
+                </td>
+                <td>
+                    {$hvat|replace:'.':','}&nbsp;€
+                </td>
+                <td>
+                    21%
+                </td>
+                <td>
+                    {$data.amount - $hvat|replace:'.':','}&nbsp;€
+                </td>
+                <td>
+                    {$data.amount}&nbsp;€
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="tar total-line">
+                <td colspan="5">
+                    {#paid_online#} {$data.amount}&nbsp;€
+                </td>
+            </tr>
+        </tfoot>
+    </mj-table>
+</mj-column>
+</mj-section>
