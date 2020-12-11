@@ -70,13 +70,6 @@ class plugins_mollie_public extends plugins_mollie_db
             $array['order'] = $formClean->simpleClean($this->order);
             $this->custom = $array;
         }
-        /*$this->mail = new frontend_model_mail($this->template,'mollie','smtp',[
-            'setHost'		=> 'web-solution-way.com',
-            'setPort'		=> 25,
-            'setEncryption'	=> '',
-            'setUsername'	=> 'server@web-solution-way.com',
-            'setPassword'	=> 'Wsw123/*'
-        ]);*/
         //@ToDo switch to this declaration when deployed online
         $this->mail = new frontend_model_mail($this->template, 'mollie');
     }
