@@ -374,21 +374,44 @@ class plugins_mollie_public extends plugins_mollie_db
             }
         }
     }
+    public function getPaymentStatus(){
+        $mollie = $this->getItems('lastHistory',NULL,'one',false);
+        return $mollie['status_h'];
+    }
     /**
      *
      */
     public function run(){
 
         if(isset($_GET['order'])){
+            if(isset($_COOKIE['mc_cart'])) {
+                $mollie = $this->getItems('history',array('order_h'=>$_GET['order']),'one',false);
 
-            $mollie = $this->getItems('history',array('order_h'=>$_GET['order']),'one',false);
-            $this->template->assign('mollie',$mollie);
+                $status = 'pending';
+                switch ($mollie['status_h']) {
+                    case 'paid':
+                        $status = 'success';
+                        break;
+                    case 'failed':
+                        $status = 'error';
+                        break;
+                    case 'canceled':
+                    case 'expired':
+                        $status = 'canceled';
+                        break;
+                }
 
-            if(isset($this->redirect)){
-                $baseUrl = http_url::getUrl();
-                header( "Refresh: 3;URL=$baseUrl/$this->getlang/$this->redirect/" );
+                header("location:/$this->getlang/cartpay/order/?step=done_step&status=$status");
+            }else{
+                $mollie = $this->getItems('history',array('order_h'=>$_GET['order']),'one',false);
+                $this->template->assign('mollie',$mollie);
+
+                if(isset($this->redirect)){
+                    $baseUrl = http_url::getUrl();
+                    header( "Refresh: 3;URL=$baseUrl/$this->getlang/$this->redirect/" );
+                }
+                $this->template->display('mollie/index.tpl');
             }
-            $this->template->display('mollie/index.tpl');
 
         }elseif(isset($_GET['webhook'])){
 
@@ -471,7 +494,7 @@ class plugins_mollie_public extends plugins_mollie_db
                     'quantity' => isset($this->custom['quantity']) ? $this->custom['quantity'] : 1,
                     'debug' => false//pre,none,printer
                 );
-
+                //print_r($config);
                 $this->createPayment($config);
             }
         }

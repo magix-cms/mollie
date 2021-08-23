@@ -30,6 +30,9 @@ class plugins_mollie_db
                 case 'history':
                     $sql = 'SELECT * FROM mc_mollie_history WHERE order_h = :order_h';
                     break;
+                case 'lastHistory':
+                    $sql = 'SELECT * FROM mc_mollie_history ORDER BY id_mollie_h DESC LIMIT 0,1';
+                    break;
             }
 
             return $sql ? component_routing_db::layer()->fetch($sql, $params) : null;
