@@ -84,6 +84,13 @@ class Refund extends BaseResource
     public $_links;
 
     /**
+     * An object containing information relevant to a refund issued for a split payment.
+     *
+     * @var array|object[]|null
+     */
+    public $routingReversal;
+
+    /**
      * Is this refund queued?
      *
      * @return bool
@@ -121,6 +128,16 @@ class Refund extends BaseResource
     public function isTransferred()
     {
         return $this->status === RefundStatus::STATUS_REFUNDED;
+    }
+
+    /**
+     * Is this refund failed?
+     *
+     * @return bool
+     */
+    public function isFailed()
+    {
+        return $this->status === RefundStatus::STATUS_FAILED;
     }
 
     /**

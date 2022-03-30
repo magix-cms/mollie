@@ -2,7 +2,6 @@
 
 namespace Mollie\Api\Resources;
 
-use Mollie\Api\MollieApiClient;
 use Mollie\Api\Types\OrderLineStatus;
 use Mollie\Api\Types\OrderLineType;
 
@@ -66,6 +65,69 @@ class OrderLine extends BaseResource
      * @var int
      */
     public $quantity;
+
+    /**
+     * The number of items that are shipped for this order line.
+     *
+     * @var int
+     */
+    public $quantityShipped;
+
+    /**
+     * The total amount that is shipped for this order line.
+     *
+     * @var \stdClass
+     */
+    public $amountShipped;
+
+    /**
+     * The number of items that are refunded for this order line.
+     *
+     * @var int
+     */
+    public $quantityRefunded;
+
+    /**
+     * The total amount that is refunded for this order line.
+     *
+     * @var \stdClass
+     */
+    public $amountRefunded;
+
+    /**
+     * The number of items that are canceled in this order line.
+     *
+     * @var int
+     */
+    public $quantityCanceled;
+
+    /**
+     * The total amount that is canceled in this order line.
+     *
+     * @var \stdClass
+     */
+    public $amountCanceled;
+
+    /**
+     * The number of items that can still be shipped for this order line.
+     *
+     * @var int
+     */
+    public $shippableQuantity;
+
+    /**
+     * The number of items that can still be refunded for this order line.
+     *
+     * @var int
+     */
+    public $refundableQuantity;
+
+    /**
+     * The number of items that can still be canceled for this order line.
+     *
+     * @var int
+     */
+    public $cancelableQuantity;
 
     /**
      * The price of a single item in the order line.
@@ -146,6 +208,34 @@ class OrderLine extends BaseResource
      * @var \stdClass
      */
     public $_links;
+
+    /**
+     * Get the url pointing to the product page in your web shop of the product sold.
+     *
+     * @return string|null
+     */
+    public function getProductUrl()
+    {
+        if (empty($this->_links->productUrl)) {
+            return null;
+        }
+
+        return $this->_links->productUrl;
+    }
+
+    /**
+     * Get the image URL of the product sold.
+     *
+     * @return string|null
+     */
+    public function getImageUrl()
+    {
+        if (empty($this->_links->imageUrl)) {
+            return null;
+        }
+
+        return $this->_links->imageUrl;
+    }
 
     /**
      * Is this order line created?
@@ -288,25 +378,43 @@ class OrderLine extends BaseResource
         return $this->type === OrderLineType::TYPE_SURCHARGE;
     }
 
+    /**
+     * Update an orderline by supplying one or more parameters in the data array
+     *
+     * @return BaseResource
+     * @throws \Mollie\Api\Exceptions\ApiException
+     */
     public function update()
     {
-        $body = json_encode(array(
+        $result = $this->client->orderLines->update($this->orderId, $this->id, $this->getUpdateData());
+
+        return ResourceFactory::createFromApiResult($result, new Order($this->client));
+    }
+
+    /**
+     * Get sanitized array of order line data
+     *
+     * @return array
+     */
+    public function getUpdateData()
+    {
+        $data = [
             "name" => $this->name,
             'imageUrl' => $this->imageUrl,
             'productUrl' => $this->productUrl,
             'metadata' => $this->metadata,
+            'sku' => $this->sku,
             'quantity' => $this->quantity,
             'unitPrice' => $this->unitPrice,
             'discountAmount' => $this->discountAmount,
             'totalAmount' => $this->totalAmount,
             'vatAmount' => $this->vatAmount,
             'vatRate' => $this->vatRate,
-        ));
+        ];
 
-        $url="orders/{$this->orderId}/lines/{$this->id}";
-
-        $result = $this->client->performHttpCall(MollieApiClient::HTTP_PATCH, $url, $body);
-
-        return ResourceFactory::createFromApiResult($result, new Order($this->client));
+        // Explicitly filter only NULL values to keep "vatRate => 0" intact
+        return array_filter($data, function ($value) {
+            return $value !== null;
+        });
     }
 }

@@ -52,6 +52,11 @@ class Subscription extends BaseResource
     public $times;
 
     /**
+     * @var int|null
+     */
+    public $timesRemaining;
+
+    /**
      * @var string
      */
     public $interval;
@@ -72,7 +77,7 @@ class Subscription extends BaseResource
     public $mandateId;
 
     /**
-     * @var array|null
+     * @var \stdClass|null
      */
     public $metadata;
 
@@ -96,6 +101,13 @@ class Subscription extends BaseResource
      * @var \stdClass|null
      */
     public $webhookUrl;
+    
+    /**
+     * Date the next subscription payment will take place. For example: 2018-04-24
+     *
+     * @var string|null
+     */
+    public $nextPaymentDate;
 
     /**
      * @var \stdClass
@@ -108,11 +120,7 @@ class Subscription extends BaseResource
      */
     public function update()
     {
-        if (!isset($this->_links->self->href)) {
-            return $this;
-        }
-
-        $body = json_encode([
+        $body = [
             "amount" => $this->amount,
             "times" => $this->times,
             "startDate" => $this->startDate,
@@ -121,17 +129,12 @@ class Subscription extends BaseResource
             "mandateId" => $this->mandateId,
             "metadata" => $this->metadata,
             "interval" => $this->interval,
-        ]);
+        ];
 
-        $result = $this->client->performHttpCallToFullUrl(
-            MollieApiClient::HTTP_PATCH,
-            $this->_links->self->href,
-            $body
-        );
+        $result = $this->client->subscriptions->update($this->customerId, $this->id, $body);
 
         return ResourceFactory::createFromApiResult($result, new Subscription($this->client));
     }
-
 
     /**
      * Returns whether the Subscription is active or not.
@@ -187,17 +190,18 @@ class Subscription extends BaseResource
      * Cancels this subscription
      *
      * @return Subscription
+     * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function cancel()
     {
-        if (!isset($this->_links->self->href)) {
+        if (! isset($this->_links->self->href)) {
             return $this;
         }
 
         $body = null;
-        if($this->client->usesOAuth()) {
+        if ($this->client->usesOAuth()) {
             $body = json_encode([
-                "testmode" => $this->mode === "test" ? true : false
+                "testmode" => $this->mode === "test" ? true : false,
             ]);
         }
 
@@ -210,9 +214,15 @@ class Subscription extends BaseResource
         return ResourceFactory::createFromApiResult($result, new Subscription($this->client));
     }
 
+    /**
+     * Get subscription payments
+     *
+     * @return \Mollie\Api\Resources\PaymentCollection
+     * @throws \Mollie\Api\Exceptions\ApiException
+     */
     public function payments()
     {
-        if (!isset($this->_links->payments->href)) {
+        if (! isset($this->_links->payments->href)) {
             return new PaymentCollection($this->client, 0, null);
         }
 

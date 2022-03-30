@@ -34,8 +34,8 @@ try {
             $refund = $payment->refund([
                 "amount" => [
                     "currency" => "EUR",
-                    "value" => "2.00" // You must send the correct number of decimals, thus we enforce the use of strings
-                ]
+                    "value" => "2.00", // You must send the correct number of decimals, thus we enforce the use of strings
+                ],
             ]);
 
             echo "{$refund->amount->currency} {$refund->amount->value} of payment {$paymentId} refunded.", PHP_EOL;
@@ -62,9 +62,9 @@ try {
     echo "<form method='get'><input name='payment_id' value='tr_xxx'/><input type='submit' /></form>";
 
     echo "<p>";
-    echo '<a href="' . $protocol . '://' . $hostname . $path . '/payments/create-payment.php">Create a payment</a><br>';
-    echo '<a href="' . $protocol . '://' . $hostname . $path . '/payments/create-ideal-payment.php">Create an iDEAL payment</a><br>';
-    echo '<a href="' . $protocol . '://' . $hostname . $path . '/payments/list-payments.php">List payments</a><br>';
+    echo '<a href="' . $protocol . '://' . $hostname . $path . '/create-payment.php">Create a payment</a><br>';
+    echo '<a href="' . $protocol . '://' . $hostname . $path . '/create-ideal-payment.php">Create an iDEAL payment</a><br>';
+    echo '<a href="' . $protocol . '://' . $hostname . $path . '/list-payments.php">List payments</a><br>';
     echo "</p>";
 } catch (\Mollie\Api\Exceptions\ApiException $e) {
     echo "API call failed: " . htmlspecialchars($e->getMessage());

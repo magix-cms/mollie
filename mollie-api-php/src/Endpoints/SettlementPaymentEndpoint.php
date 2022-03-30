@@ -2,7 +2,6 @@
 
 namespace Mollie\Api\Endpoints;
 
-use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
@@ -30,7 +29,7 @@ class SettlementPaymentEndpoint extends CollectionEndpointAbstract
     /**
      * Retrieves a collection of Payments from Mollie.
      *
-     * @param $settlementId
+     * @param string $settlementId
      * @param string $from The first payment ID you want to include in your list.
      * @param int $limit
      * @param array $parameters
