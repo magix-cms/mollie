@@ -3,7 +3,6 @@
 namespace Mollie\Api\Resources;
 
 use Mollie\Api\MollieApiClient;
-
 /**
  * @property string $resource
  * @property int $id
@@ -36,18 +35,16 @@ use Mollie\Api\MollieApiClient;
  * @method issuers()
  * @method pricing()
  */
-
 abstract class BaseResource
 {
     /**
      * @var MollieApiClient
      */
     protected $client;
-
     /**
      * @param MollieApiClient $client
      */
-    public function __construct(MollieApiClient $client)
+    public function __construct(\Mollie\Api\MollieApiClient $client)
     {
         $this->client = $client;
     }

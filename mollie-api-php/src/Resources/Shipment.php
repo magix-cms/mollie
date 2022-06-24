@@ -2,13 +2,12 @@
 
 namespace Mollie\Api\Resources;
 
-class Shipment extends BaseResource
+class Shipment extends \Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
      */
     public $resource;
-
     /**
      * The shipment’s unique identifier,
      *
@@ -16,7 +15,6 @@ class Shipment extends BaseResource
      * @var string
      */
     public $id;
-
     /**
      * Id of the order.
      *
@@ -24,7 +22,6 @@ class Shipment extends BaseResource
      * @var string
      */
     public $orderId;
-
     /**
      * UTC datetime the shipment was created in ISO-8601 format.
      *
@@ -32,25 +29,21 @@ class Shipment extends BaseResource
      * @var string|null
      */
     public $createdAt;
-
     /**
      * The order object lines contain the actual things the customer bought.
      * @var array|object[]
      */
     public $lines;
-
     /**
      * An object containing tracking details for the shipment, if available.
      * @var \stdClass|null
      */
     public $tracking;
-
     /**
      * An object with several URL objects relevant to the customer. Every URL object will contain an href and a type field.
      * @var \stdClass
      */
     public $_links;
-
     /**
      * Does this shipment offer track and trace?
      *
@@ -60,7 +53,6 @@ class Shipment extends BaseResource
     {
         return $this->tracking !== null;
     }
-
     /**
      * Does this shipment offer a track and trace code?
      *
@@ -68,9 +60,8 @@ class Shipment extends BaseResource
      */
     public function hasTrackingUrl()
     {
-        return $this->hasTracking() && ! empty($this->tracking->url);
+        return $this->hasTracking() && !empty($this->tracking->url);
     }
-
     /**
      * Retrieve the track and trace url. Returns null if there is no url available.
      *
@@ -78,13 +69,11 @@ class Shipment extends BaseResource
      */
     public function getTrackingUrl()
     {
-        if (! $this->hasTrackingUrl()) {
+        if (!$this->hasTrackingUrl()) {
             return null;
         }
-
         return $this->tracking->url;
     }
-
     /**
      * Get the line value objects
      *
@@ -92,13 +81,8 @@ class Shipment extends BaseResource
      */
     public function lines()
     {
-        return ResourceFactory::createBaseResourceCollection(
-            $this->client,
-            OrderLine::class,
-            $this->lines
-        );
+        return \Mollie\Api\Resources\ResourceFactory::createBaseResourceCollection($this->client, \Mollie\Api\Resources\OrderLine::class, $this->lines);
     }
-
     /**
      * Get the Order object for this shipment
      *
@@ -109,7 +93,6 @@ class Shipment extends BaseResource
     {
         return $this->client->orders->get($this->orderId);
     }
-
     /**
      * Save changes made to this shipment.
      *
@@ -118,12 +101,8 @@ class Shipment extends BaseResource
      */
     public function update()
     {
-        $body = [
-            "tracking" => $this->tracking,
-        ];
-
+        $body = ["tracking" => $this->tracking];
         $result = $this->client->shipments->update($this->orderId, $this->id, $body);
-
-        return ResourceFactory::createFromApiResult($result, new Shipment($this->client));
+        return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \Mollie\Api\Resources\Shipment($this->client));
     }
 }

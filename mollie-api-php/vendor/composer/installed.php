@@ -13,12 +13,12 @@
   array (
     'composer/ca-bundle' => 
     array (
-      'pretty_version' => '1.3.1',
-      'version' => '1.3.1.0',
+      'pretty_version' => '1.3.2',
+      'version' => '1.3.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => '4c679186f2aca4ab6a0f1b0b9cf9252decb44d0b',
+      'reference' => 'fd5dd441932a7e10ca6e5b490e272d34c8430640',
     ),
     'mollie/mollie-api-php' => 
     array (
