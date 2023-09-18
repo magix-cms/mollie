@@ -12,7 +12,7 @@ class PaymentLinkEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstra
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'pl_';
+    public const RESOURCE_ID_PREFIX = 'pl_';
     /**
      * @return PaymentLink
      */

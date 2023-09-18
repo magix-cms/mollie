@@ -8,10 +8,6 @@ use Mollie\Api\Types\SettlementStatus;
 class Settlement extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
      * Id of the settlement.
      *
      * @var string
@@ -109,7 +105,7 @@ class Settlement extends \Mollie\Api\Resources\BaseResource
      * @return PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function payments($limit = null, array $parameters = [])
+    public function payments(int $limit = null, array $parameters = []) : \Mollie\Api\Resources\PaymentCollection
     {
         return $this->client->settlementPayments->pageForId($this->id, null, $limit, $parameters);
     }

@@ -9,10 +9,6 @@ class Subscription extends \Mollie\Api\Resources\BaseResource
     /**
      * @var string
      */
-    public $resource;
-    /**
-     * @var string
-     */
     public $id;
     /**
      * @var string
@@ -95,7 +91,7 @@ class Subscription extends \Mollie\Api\Resources\BaseResource
      */
     public $_links;
     /**
-     * @return BaseResource|Subscription
+     * @return Subscription
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function update()

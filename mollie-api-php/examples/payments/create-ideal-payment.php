@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper40e2a8a0542d;
+namespace _PhpScoperf7c63b60b99d;
 
 /*
  * How to prepare an iDEAL payment with the Mollie API.
@@ -35,7 +35,7 @@ try {
      */
     $protocol = isset($_SERVER['HTTPS']) && \strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'];
-    $path = \dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = \dirname($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF']);
     /*
      * Payment parameters:
      *   amount        Amount in EUROs. This example creates a € 27.50 payment.
@@ -50,7 +50,7 @@ try {
     /*
      * In this example we store the order with its payment status in a database.
      */
-    \_PhpScoper40e2a8a0542d\database_write($orderId, $payment->status);
+    \_PhpScoperf7c63b60b99d\database_write($orderId, $payment->status);
     /*
      * Send the customer off to complete the payment.
      * This request should always be a GET, thus we enforce 303 http response code

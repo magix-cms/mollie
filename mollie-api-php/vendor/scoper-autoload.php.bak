@@ -6,25 +6,25 @@ $loader = require_once __DIR__.'/autoload.php';
 
 // Aliases for the whitelisted classes. For more information see:
 // https://github.com/humbug/php-scoper/blob/master/README.md#class-whitelisting
-if (!class_exists('ComposerAutoloaderInitd6451ce8cbdb9a811b6a828c6f747536', false) && !interface_exists('ComposerAutoloaderInitd6451ce8cbdb9a811b6a828c6f747536', false) && !trait_exists('ComposerAutoloaderInitd6451ce8cbdb9a811b6a828c6f747536', false)) {
-    spl_autoload_call('_PhpScoper40e2a8a0542d\ComposerAutoloaderInitd6451ce8cbdb9a811b6a828c6f747536');
+if (!class_exists('ComposerAutoloaderInit617dbc66d182e97844e7363117763c69', false) && !interface_exists('ComposerAutoloaderInit617dbc66d182e97844e7363117763c69', false) && !trait_exists('ComposerAutoloaderInit617dbc66d182e97844e7363117763c69', false)) {
+    spl_autoload_call('_PhpScoperf7c63b60b99d\ComposerAutoloaderInit617dbc66d182e97844e7363117763c69');
 }
 
 // Functions whitelisting. For more information see:
 // https://github.com/humbug/php-scoper/blob/master/README.md#functions-whitelisting
 if (!function_exists('database_write')) {
     function database_write() {
-        return \_PhpScoper40e2a8a0542d\database_write(...func_get_args());
+        return \_PhpScoperf7c63b60b99d\database_write(...func_get_args());
     }
 }
 if (!function_exists('database_read')) {
     function database_read() {
-        return \_PhpScoper40e2a8a0542d\database_read(...func_get_args());
+        return \_PhpScoperf7c63b60b99d\database_read(...func_get_args());
     }
 }
 if (!function_exists('printOrders')) {
     function printOrders() {
-        return \_PhpScoper40e2a8a0542d\printOrders(...func_get_args());
+        return \_PhpScoperf7c63b60b99d\printOrders(...func_get_args());
     }
 }
 

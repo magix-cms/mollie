@@ -2,7 +2,7 @@
 
 namespace Mollie\Api\HttpAdapter;
 
-use _PhpScoper40e2a8a0542d\Composer\CaBundle\CaBundle;
+use _PhpScoperf7c63b60b99d\Composer\CaBundle\CaBundle;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Exceptions\CurlConnectTimeoutException;
 use Mollie\Api\MollieApiClient;
@@ -11,23 +11,23 @@ final class CurlMollieHttpAdapter implements \Mollie\Api\HttpAdapter\MollieHttpA
     /**
      * Default response timeout (in seconds).
      */
-    const DEFAULT_TIMEOUT = 10;
+    public const DEFAULT_TIMEOUT = 10;
     /**
      * Default connect timeout (in seconds).
      */
-    const DEFAULT_CONNECT_TIMEOUT = 2;
+    public const DEFAULT_CONNECT_TIMEOUT = 2;
     /**
      * HTTP status code for an empty ok response.
      */
-    const HTTP_NO_CONTENT = 204;
+    public const HTTP_NO_CONTENT = 204;
     /**
      * The maximum number of retries
      */
-    const MAX_RETRIES = 5;
+    public const MAX_RETRIES = 5;
     /**
      * The amount of milliseconds the delay is being increased with on each retry.
      */
-    const DELAY_INCREASE_MS = 1000;
+    public const DELAY_INCREASE_MS = 1000;
     /**
      * @param string $httpMethod
      * @param string $url
@@ -66,7 +66,7 @@ final class CurlMollieHttpAdapter implements \Mollie\Api\HttpAdapter\MollieHttpA
         \curl_setopt($curl, \CURLOPT_CONNECTTIMEOUT, self::DEFAULT_CONNECT_TIMEOUT);
         \curl_setopt($curl, \CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
         \curl_setopt($curl, \CURLOPT_SSL_VERIFYPEER, \true);
-        \curl_setopt($curl, \CURLOPT_CAINFO, \_PhpScoper40e2a8a0542d\Composer\CaBundle\CaBundle::getBundledCaBundlePath());
+        \curl_setopt($curl, \CURLOPT_CAINFO, \_PhpScoperf7c63b60b99d\Composer\CaBundle\CaBundle::getBundledCaBundlePath());
         switch ($httpMethod) {
             case \Mollie\Api\MollieApiClient::HTTP_POST:
                 \curl_setopt($curl, \CURLOPT_POST, \true);

@@ -10,6 +10,10 @@ class ApiException extends \Exception
      */
     protected $field;
     /**
+     * @var string
+     */
+    protected $plainMessage;
+    /**
      * @var \Psr\Http\Message\RequestInterface|null
      */
     protected $request;
@@ -38,6 +42,7 @@ class ApiException extends \Exception
      */
     public function __construct($message = "", $code = 0, $field = null, $request = null, $response = null, $previous = null)
     {
+        $this->plainMessage = $message;
         $this->raisedAt = new \DateTimeImmutable();
         $formattedRaisedAt = $this->raisedAt->format(\DateTime::ISO8601);
         $message = "[{$formattedRaisedAt}] " . $message;
@@ -118,7 +123,7 @@ class ApiException extends \Exception
         return $this->response !== null;
     }
     /**
-     * @param int $key
+     * @param string $key
      * @return bool
      */
     public function hasLink($key)
@@ -126,7 +131,7 @@ class ApiException extends \Exception
         return \array_key_exists($key, $this->links);
     }
     /**
-     * @param int $key
+     * @param string $key
      * @return mixed|null
      */
     public function getLink($key)
@@ -137,7 +142,7 @@ class ApiException extends \Exception
         return null;
     }
     /**
-     * @param int $key
+     * @param string $key
      * @return null
      */
     public function getUrl($key)
@@ -176,5 +181,14 @@ class ApiException extends \Exception
             throw new self("Unable to decode Mollie response: '{$body}'.");
         }
         return $object;
+    }
+    /**
+     * Retrieve the plain exception message.
+     *
+     * @return string
+     */
+    public function getPlainMessage()
+    {
+        return $this->plainMessage;
     }
 }

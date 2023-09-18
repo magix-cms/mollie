@@ -13,7 +13,7 @@ class PaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'tr_';
+    public const RESOURCE_ID_PREFIX = 'tr_';
     /**
      * @return Payment
      */
@@ -143,7 +143,7 @@ class PaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     {
         $resource = "{$this->getResourcePath()}/" . \urlencode($payment->id) . "/refunds";
         $body = null;
-        if (\count($data) > 0) {
+        if (($data === null ? 0 : \count($data)) > 0) {
             $body = \json_encode($data);
         }
         $result = $this->client->performHttpCall(self::REST_CREATE, $resource, $body);

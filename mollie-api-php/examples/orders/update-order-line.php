@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper40e2a8a0542d;
+namespace _PhpScoperf7c63b60b99d;
 
 /*
  * How to update an order line with the Mollie API

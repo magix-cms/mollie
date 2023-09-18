@@ -3,6 +3,7 @@
 namespace Mollie\Api\Resources;
 
 use Mollie\Api\MollieApiClient;
+#[\AllowDynamicProperties]
 class ResourceFactory
 {
     /**
@@ -11,7 +12,7 @@ class ResourceFactory
      * @param object $apiResult
      * @param BaseResource $resource
      *
-     * @return BaseResource
+     * @return mixed
      */
     public static function createFromApiResult($apiResult, \Mollie\Api\Resources\BaseResource $resource)
     {
@@ -25,7 +26,7 @@ class ResourceFactory
      * @param string $resourceClass
      * @param array $data
      * @param null $_links
-     * @param null $resourceCollectionClass
+     * @param string $resourceCollectionClass
      * @return mixed
      */
     public static function createBaseResourceCollection(\Mollie\Api\MollieApiClient $client, $resourceClass, $data, $_links = null, $resourceCollectionClass = null)

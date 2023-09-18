@@ -9,10 +9,6 @@ use Mollie\Api\Types\SequenceType;
 class Payment extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
      * Id of the payment (on the Mollie platform).
      *
      * @var string
@@ -34,7 +30,7 @@ class Payment extends \Mollie\Api\Resources\BaseResource
     /**
      * The amount that has been settled containing the value and currency
      *
-     * @var \stdClass
+     * @var \stdClass|null
      */
     public $settlementAmount;
     /**
@@ -153,6 +149,12 @@ class Payment extends \Mollie\Api\Resources\BaseResource
      */
     public $redirectUrl;
     /**
+     * Cancel URL set on this payment
+     *
+     * @var string
+     */
+    public $cancelUrl;
+    /**
      * Webhook URL set on this payment
      *
      * @var string|null
@@ -233,6 +235,33 @@ class Payment extends \Mollie\Api\Resources\BaseResource
      * @var \stdClass|null
      */
     public $amountCaptured;
+    /**
+     * Indicates whether the capture will be scheduled automatically or not. Set
+     * to manual to capture the payment manually using the Create capture endpoint.
+     *
+     * Possible values: "automatic", "manual"
+     *
+     * @var string|null
+     */
+    public $captureMode;
+    /**
+     * Indicates the interval to wait before the payment is
+     * captured, for example `8 hours` or `2 days. The capture delay
+     * will be added to the date and time the payment became authorized.
+     *
+     * Possible values: ... hours ... days
+     * @example 8 hours
+     * @var string|null
+     */
+    public $captureDelay;
+    /**
+     * UTC datetime on which the merchant has to have captured the payment in
+     * ISO-8601 format. This parameter is omitted if the payment is not authorized (yet).
+     *
+     * @example "2013-12-25T10:30:54+00:00"
+     * @var string|null
+     */
+    public $captureBefore;
     /**
      * The application fee, if the payment was created with one. Contains amount
      * (the value and currency) and description.
@@ -562,7 +591,7 @@ class Payment extends \Mollie\Api\Resources\BaseResource
      *
      * @param array $data
      *
-     * @return BaseResource
+     * @return \Mollie\Api\Resources\Refund
      * @throws ApiException
      */
     public function refund($data)
@@ -570,12 +599,12 @@ class Payment extends \Mollie\Api\Resources\BaseResource
         return $this->client->paymentRefunds->createFor($this, $data);
     }
     /**
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function update()
     {
-        $body = ["description" => $this->description, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl, "metadata" => $this->metadata, "restrictPaymentMethodsToCountry" => $this->restrictPaymentMethodsToCountry, "locale" => $this->locale, "dueDate" => $this->dueDate];
+        $body = ["description" => $this->description, "cancelUrl" => $this->cancelUrl, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl, "metadata" => $this->metadata, "restrictPaymentMethodsToCountry" => $this->restrictPaymentMethodsToCountry, "locale" => $this->locale, "dueDate" => $this->dueDate];
         $result = $this->client->payments->update($this->id, $body);
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \Mollie\Api\Resources\Payment($this->client));
     }

@@ -8,10 +8,6 @@ class Onboarding extends \Mollie\Api\Resources\BaseResource
     /**
      * @var string
      */
-    public $resource;
-    /**
-     * @var string
-     */
     public $name;
     /**
      * @var string

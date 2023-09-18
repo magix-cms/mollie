@@ -2,7 +2,6 @@
 
 namespace Mollie\Api\Endpoints;
 
-use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 class SettlementPaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
@@ -30,7 +29,7 @@ class SettlementPaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpoint
      * @param int $limit
      * @param array $parameters
      *
-     * @return BaseCollection|PaymentCollection
+     * @return mixed
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function pageForId($settlementId, $from = null, $limit = null, array $parameters = [])

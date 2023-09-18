@@ -42,7 +42,6 @@ class OnboardingEndpoint extends \Mollie\Api\Endpoints\EndpointAbstract
      *
      * Will throw a ApiException if the resource cannot be found.
      *
-     * @return void
      * @throws ApiException
      */
     public function submit(array $parameters = [])
@@ -53,7 +52,7 @@ class OnboardingEndpoint extends \Mollie\Api\Endpoints\EndpointAbstract
      * @param string $id
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return mixed
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function rest_read($id, array $filters)
@@ -65,7 +64,7 @@ class OnboardingEndpoint extends \Mollie\Api\Endpoints\EndpointAbstract
      * @param array $body
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource|void
+     * @return mixed
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function rest_create(array $body, array $filters)

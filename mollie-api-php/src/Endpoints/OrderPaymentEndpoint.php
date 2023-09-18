@@ -11,7 +11,7 @@ class OrderPaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'tr_';
+    public const RESOURCE_ID_PREFIX = 'tr_';
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one
      * type of object.
@@ -42,7 +42,7 @@ class OrderPaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      * @param array $data An array containing details on the order payment.
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createFor(\Mollie\Api\Resources\Order $order, array $data, array $filters = [])
@@ -56,7 +56,7 @@ class OrderPaymentEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstr
      * @param array $data An array containing details on the order payment.
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForId($orderId, array $data, array $filters = [])

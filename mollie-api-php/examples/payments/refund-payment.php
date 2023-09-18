@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper40e2a8a0542d;
+namespace _PhpScoperf7c63b60b99d;
 
 /*
  * How to refund a payment programmatically
@@ -17,14 +17,14 @@ try {
      */
     $protocol = isset($_SERVER['HTTPS']) && \strcasecmp('off', $_SERVER['HTTPS']) !== 0 ? "https" : "http";
     $hostname = $_SERVER['HTTP_HOST'];
-    $path = \dirname(isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']);
+    $path = \dirname($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF']);
     if (isset($_GET['payment_id'])) {
         /*
          * Retrieve the payment you want to refund from the API.
          */
         $paymentId = $_GET['payment_id'];
         $payment = $mollie->payments->get($paymentId);
-        if ($payment->canBeRefunded() && $payment->amountRemaining->currency === 'EUR' && $payment->amountRemaining->value >= '2.00') {
+        if ($payment->canBeRefunded() && $payment->amountRemaining->currency === 'EUR' && $payment->getAmountRemaining() >= 2.0) {
             /*
              * Refund € 2,00 of the payment.
              *

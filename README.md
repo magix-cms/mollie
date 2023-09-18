@@ -28,3 +28,6 @@ Ce plugin est dédié a Magix CMS et travail avec Mollie.
    * CURL (http://php.net/manual/en/book.curl.php)
    
 ## Aperçu
+
+<img width="595" alt="Capture d’écran 2023-09-18 à 15 32 12" src="https://github.com/magix-cms/mollie/assets/356674/e83550bf-d639-4ce5-acca-25fe4a85057d">
+

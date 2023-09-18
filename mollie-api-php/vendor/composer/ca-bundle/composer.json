@@ -34,12 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "_PhpScoper40e2a8a0542d\\Composer\\CaBundle\\": "src"
+            "_PhpScoperf7c63b60b99d\\Composer\\CaBundle\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_PhpScoper40e2a8a0542d\\Composer\\CaBundle\\": "tests"
+            "_PhpScoperf7c63b60b99d\\Composer\\CaBundle\\": "tests"
         }
     },
     "extra": {

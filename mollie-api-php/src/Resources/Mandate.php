@@ -9,10 +9,6 @@ class Mandate extends \Mollie\Api\Resources\BaseResource
     /**
      * @var string
      */
-    public $resource;
-    /**
-     * @var string
-     */
     public $id;
     /**
      * @var string
@@ -76,7 +72,7 @@ class Mandate extends \Mollie\Api\Resources\BaseResource
     /**
      * Revoke the mandate
      *
-     * @return null
+     * @return null|\stdClass|\Mollie\Api\Resources\Mandate
      */
     public function revoke()
     {

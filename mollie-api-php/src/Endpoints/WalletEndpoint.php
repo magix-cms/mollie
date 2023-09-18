@@ -2,12 +2,13 @@
 
 namespace Mollie\Api\Endpoints;
 
+use Mollie\Api\Resources\BaseResource;
 class WalletEndpoint extends \Mollie\Api\Endpoints\EndpointAbstract
 {
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *
-     * @return void
+     * @return void|BaseResource
      */
     protected function getResourceObject()
     {

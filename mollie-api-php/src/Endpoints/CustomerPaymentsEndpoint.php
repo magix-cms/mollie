@@ -50,7 +50,7 @@ class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointA
      * @param array $options
      * @param array $filters
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForId($customerId, array $options = [], array $filters = [])
@@ -77,7 +77,7 @@ class CustomerPaymentsEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointA
      * @param int $limit
      * @param array $parameters
      *
-     * @return \Mollie\Api\Resources\BaseCollection|\Mollie\Api\Resources\PaymentCollection
+     * @return \Mollie\Api\Resources\PaymentCollection
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function listForId($customerId, $from = null, $limit = null, array $parameters = [])

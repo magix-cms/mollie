@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
  */
-namespace _PhpScoper40e2a8a0542d\Composer\CaBundle;
+namespace _PhpScoperf7c63b60b99d\Composer\CaBundle;
 
-use _PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface;
-use _PhpScoper40e2a8a0542d\Symfony\Component\Process\PhpProcess;
+use _PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface;
+use _PhpScoperf7c63b60b99d\Symfony\Component\Process\PhpProcess;
 /**
  * @author Chris Smith <chris@cs278.org>
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -61,7 +61,7 @@ class CaBundle
      * @param  LoggerInterface $logger optional logger for information about which CA files were loaded
      * @return string          path to a CA bundle file or directory
      */
-    public static function getSystemCaRootBundlePath(\_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    public static function getSystemCaRootBundlePath(\_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         if (self::$caPath !== null) {
             return self::$caPath;
@@ -148,7 +148,7 @@ class CaBundle
      *
      * @return bool
      */
-    public static function validateCaFile($filename, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    public static function validateCaFile($filename, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         static $warned = \false;
         if (isset(self::$caFileValidity[$filename])) {
@@ -219,7 +219,7 @@ class CaBundle
             return self::$useOpensslParse = \true;
         }
         // Symfony Process component is missing so we assume it is unsafe at this point
-        if (!\class_exists('_PhpScoper40e2a8a0542d\\Symfony\\Component\\Process\\PhpProcess')) {
+        if (!\class_exists('_PhpScoperf7c63b60b99d\\Symfony\\Component\\Process\\PhpProcess')) {
             return self::$useOpensslParse = \false;
         }
         // This is where things get crazy, because distros backport security
@@ -240,7 +240,7 @@ var_dump(PHP_VERSION, $info['issuer']['emailAddress'], $info['validFrom_time_t']
 EOT;
         $script = '<' . "?php\n" . \sprintf($script, $cert);
         try {
-            $process = new \_PhpScoper40e2a8a0542d\Symfony\Component\Process\PhpProcess($script);
+            $process = new \_PhpScoperf7c63b60b99d\Symfony\Component\Process\PhpProcess($script);
             $process->mustRun();
         } catch (\Exception $e) {
             // In the case of any exceptions just accept it is not possible to
@@ -284,7 +284,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function caFileUsable($certFile, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function caFileUsable($certFile, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         return $certFile && static::isFile($certFile, $logger) && static::isReadable($certFile, $logger) && static::validateCaFile($certFile, $logger);
     }
@@ -293,7 +293,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function caDirUsable($certDir, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function caDirUsable($certDir, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         return $certDir && static::isDir($certDir, $logger) && static::isReadable($certDir, $logger) && static::glob($certDir . '/*', $logger);
     }
@@ -302,7 +302,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function isFile($certFile, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function isFile($certFile, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         $isFile = @\is_file($certFile);
         if (!$isFile && $logger) {
@@ -315,7 +315,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function isDir($certDir, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function isDir($certDir, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         $isDir = @\is_dir($certDir);
         if (!$isDir && $logger) {
@@ -328,7 +328,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function isReadable($certFileOrDir, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function isReadable($certFileOrDir, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         $isReadable = @\is_readable($certFileOrDir);
         if (!$isReadable && $logger) {
@@ -341,7 +341,7 @@ EOT;
      * @param  LoggerInterface|null $logger
      * @return bool
      */
-    private static function glob($pattern, \_PhpScoper40e2a8a0542d\Psr\Log\LoggerInterface $logger = null)
+    private static function glob($pattern, \_PhpScoperf7c63b60b99d\Psr\Log\LoggerInterface $logger = null)
     {
         $certs = \glob($pattern);
         if ($certs === \false) {

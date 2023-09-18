@@ -5,10 +5,6 @@ namespace Mollie\Api\Resources;
 class PaymentLink extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
      * Id of the payment link (on the Mollie platform).
      *
      * @var string
@@ -42,6 +38,13 @@ class PaymentLink extends \Mollie\Api\Resources\BaseResource
      * @var string|null
      */
     public $paidAt;
+    /**
+     * Whether the payment link is archived. Customers will not be able to complete
+     * payments on archived payment links.
+     *
+     * @var bool
+     */
+    public $archived;
     /**
      * UTC datetime the payment link was updated in ISO-8601 format.
      *

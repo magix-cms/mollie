@@ -6,10 +6,6 @@ class Permission extends \Mollie\Api\Resources\BaseResource
 {
     /**
      * @var string
-     */
-    public $resource;
-    /**
-     * @var string
      * @example payments.read
      */
     public $id;

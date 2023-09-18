@@ -5,10 +5,6 @@ namespace Mollie\Api\Resources;
 class Route extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
      * Id of the payment method.
      *
      * @var string

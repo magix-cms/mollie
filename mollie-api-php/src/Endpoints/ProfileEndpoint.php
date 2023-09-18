@@ -13,7 +13,7 @@ class ProfileEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbstract
     /**
      * @var string
      */
-    const RESOURCE_ID_PREFIX = 'pfl_';
+    public const RESOURCE_ID_PREFIX = 'pfl_';
     /**
      * Get the object that is used by this API endpoint. Every API endpoint uses one type of object.
      *

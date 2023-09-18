@@ -8,10 +8,6 @@ use Mollie\Api\Types\OrderStatus;
 class Order extends \Mollie\Api\Resources\BaseResource
 {
     /**
-     * @var string
-     */
-    public $resource;
-    /**
      * Id of the order.
      *
      * @example ord_8wmqcHMN4U
@@ -118,6 +114,12 @@ class Order extends \Mollie\Api\Resources\BaseResource
      */
     public $redirectUrl;
     /**
+     * Cancel URL set on this payment
+     *
+     * @var string
+     */
+    public $cancelUrl;
+    /**
      * UTC datetime the order was created in ISO-8601 format.
      *
      * @example "2013-12-25T10:30:54+00:00"
@@ -173,13 +175,21 @@ class Order extends \Mollie\Api\Resources\BaseResource
      */
     public $lines;
     /**
+     * For digital goods, you must make sure to apply the VAT rate from your customer’s country in most jurisdictions.
+     * Use this parameter to restrict the payment methods available to your customer to methods from the billing country
+     * only.
+     *
+     * @var bool
+     */
+    public $shopperCountryMustMatchBillingCountry;
+    /**
      * An object with several URL objects relevant to the customer. Every URL object will contain an href and a type field.
      *
      * @var \stdClass
      */
     public $_links;
     /**
-     * @var \stdClass
+     * @var \stdClass|null
      */
     public $_embedded;
     /**
@@ -415,12 +425,12 @@ class Order extends \Mollie\Api\Resources\BaseResource
     /**
      * Saves the order's updated billingAddress and/or shippingAddress.
      *
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Order
+     * @return \Mollie\Api\Resources\Order
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function update()
     {
-        $body = ["billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber, "redirectUrl" => $this->redirectUrl, "webhookUrl" => $this->webhookUrl];
+        $body = ["billingAddress" => $this->billingAddress, "shippingAddress" => $this->shippingAddress, "orderNumber" => $this->orderNumber, "redirectUrl" => $this->redirectUrl, "cancelUrl" => $this->cancelUrl, "webhookUrl" => $this->webhookUrl];
         $result = $this->client->orders->update($this->id, $body);
         return \Mollie\Api\Resources\ResourceFactory::createFromApiResult($result, new \Mollie\Api\Resources\Order($this->client));
     }
@@ -429,7 +439,7 @@ class Order extends \Mollie\Api\Resources\BaseResource
      *
      * @param array $data
      * @param array $filters
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Payment
+     * @return \Mollie\Api\Resources\Payment
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createPayment($data, $filters = [])

@@ -1,6 +1,6 @@
 <?php
 
-namespace _PhpScoper40e2a8a0542d;
+namespace _PhpScoperf7c63b60b99d;
 
 /*
  * How to cancel a subscription.
@@ -18,7 +18,7 @@ try {
     /*
      * The subscription ID, starting with sub_
      */
-    $subscriptionId = isset($_GET['subscription_id']) ? $_GET['subscription_id'] : '';
+    $subscriptionId = $_GET['subscription_id'] ?? '';
     /*
      * Customer Subscription deletion parameters.
      *

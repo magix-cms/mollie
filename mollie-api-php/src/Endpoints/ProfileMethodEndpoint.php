@@ -36,7 +36,7 @@ class ProfileMethodEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbst
      * @param string $profileId
      * @param string $methodId
      * @param array $data
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return \Mollie\Api\Resources\Method
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForId($profileId, $methodId, array $data = [])
@@ -68,7 +68,7 @@ class ProfileMethodEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbst
      *
      * @param string $methodId
      * @param array $data
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return \Mollie\Api\Resources\Method
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function createForCurrentProfile($methodId, array $data = [])
@@ -81,7 +81,7 @@ class ProfileMethodEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbst
      * @param string $profileId
      * @param string $methodId
      * @param array $data
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return mixed
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function deleteForId($profileId, $methodId, array $data = [])
@@ -92,10 +92,9 @@ class ProfileMethodEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbst
     /**
      * Disable a method for the provided Profile object.
      *
-     * @param \stdClass $profile
+     * @param Profile $profile
      * @param string $methodId
      * @param array $data
-     * @return \Mollie\Api\Resources\BaseResource
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function deleteFor($profile, $methodId, array $data = [])
@@ -107,7 +106,7 @@ class ProfileMethodEndpoint extends \Mollie\Api\Endpoints\CollectionEndpointAbst
      *
      * @param string $methodId
      * @param array $data
-     * @return \Mollie\Api\Resources\BaseResource
+     * @return \Mollie\Api\Resources\Method
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     public function deleteForCurrentProfile($methodId, array $data)

@@ -1,18 +1,18 @@
 {
     "packages": [
         {
-            "name": "composer/ca-bundle",
-            "version": "1.3.2",
-            "version_normalized": "1.3.2.0",
+            "name": "composer\/ca-bundle",
+            "version": "1.3.6",
+            "version_normalized": "1.3.6.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "fd5dd441932a7e10ca6e5b490e272d34c8430640"
+                "url": "https:\/\/github.com\/composer\/ca-bundle.git",
+                "reference": "90d087e988ff194065333d16bc5cf649872d9cdb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/fd5dd441932a7e10ca6e5b490e272d34c8430640",
-                "reference": "fd5dd441932a7e10ca6e5b490e272d34c8430640",
+                "url": "https:\/\/api.github.com\/repos\/composer\/ca-bundle\/zipball\/90d087e988ff194065333d16bc5cf649872d9cdb",
+                "reference": "90d087e988ff194065333d16bc5cf649872d9cdb",
                 "shasum": ""
             },
             "require": {
@@ -21,12 +21,12 @@
                 "php": "^5.3.2 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "^0.12.55",
-                "psr/log": "^1.0",
-                "symfony/phpunit-bridge": "^4.2 || ^5",
-                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
+                "phpstan\/phpstan": "^0.12.55",
+                "psr\/log": "^1.0",
+                "symfony\/phpunit-bridge": "^4.2 || ^5",
+                "symfony\/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
-            "time": "2022-05-24T11:56:16+00:00",
+            "time": "2023-06-06T12:02:59+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -36,10 +36,10 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_PhpScoper40e2a8a0542d\\Composer\\CaBundle\\": "src"
+                    "_PhpScoperf7c63b60b99d\\Composer\\CaBundle\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
             "license": [
                 "MIT"
             ],
@@ -47,7 +47,7 @@
                 {
                     "name": "Jordi Boggiano",
                     "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
+                    "homepage": "http:\/\/seld.be"
                 }
             ],
             "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
@@ -59,25 +59,25 @@
                 "tls"
             ],
             "support": {
-                "irc": "irc://irc.freenode.org/composer",
-                "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.2"
+                "irc": "irc:\/\/irc.freenode.org\/composer",
+                "issues": "https:\/\/github.com\/composer\/ca-bundle\/issues",
+                "source": "https:\/\/github.com\/composer\/ca-bundle\/tree\/1.3.6"
             },
             "funding": [
                 {
-                    "url": "https://packagist.com",
+                    "url": "https:\/\/packagist.com",
                     "type": "custom"
                 },
                 {
-                    "url": "https://github.com/composer",
+                    "url": "https:\/\/github.com\/composer",
                     "type": "github"
                 },
                 {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/composer\/composer",
                     "type": "tidelift"
                 }
             ],
-            "install-path": "./ca-bundle"
+            "install-path": ".\/ca-bundle"
         }
     ],
     "dev": false,

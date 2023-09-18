@@ -10,10 +10,6 @@ class Profile extends \Mollie\Api\Resources\BaseResource
     /**
      * @var string
      */
-    public $resource;
-    /**
-     * @var string
-     */
     public $id;
     /**
      * Test or live mode
@@ -92,7 +88,7 @@ class Profile extends \Mollie\Api\Resources\BaseResource
         return $this->status == \Mollie\Api\Types\ProfileStatus::STATUS_BLOCKED;
     }
     /**
-     * @return \Mollie\Api\Resources\BaseResource|\Mollie\Api\Resources\Profile
+     * @return \Mollie\Api\Resources\Profile
      * @throws ApiException
      */
     public function update()
