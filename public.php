@@ -7,7 +7,6 @@ class plugins_mollie_public extends plugins_mollie_db
         $mail,
         $header,
         $data,
-        $getlang,
         $modelDomain,
         $config,
         $settings,
@@ -17,23 +16,25 @@ class plugins_mollie_public extends plugins_mollie_db
         $sanitize;
 
     public $purchase,
+        $lang,
         $custom,
         $urlStatus,
         $payment_plugin = true,
         $callback,
         $order,
-        $redirect;
+        $redirect,
+        $webhook;
 
     /**
      * plugins_hipay_public constructor.
      * @param null $t
      */
-    public function __construct($t = null)
+    public function __construct(frontend_model_template $t = null)
     {
         $this->template = $t instanceof frontend_model_template ? $t : new frontend_model_template();
         $this->header = new http_header();
         $this->data = new frontend_model_data($this,$this->template);
-        $this->getlang = $this->template->lang;
+        $this->lang = $this->template->lang;
         $formClean = new form_inputEscape();
         $this->sanitize = new filter_sanitize();
         //$this->header = new component_httpUtils_header($this->template);
@@ -57,6 +58,11 @@ class plugins_mollie_public extends plugins_mollie_db
             $this->redirect = $formClean->simpleClean($_GET['redirect']);
         }elseif (http_request::isPost('redirect')) {
             $this->redirect = $formClean->simpleClean($_POST['redirect']);
+        }
+        if (http_request::isGet('webhook')) {
+            $this->webhook = $formClean->simpleClean($_GET['webhook']);
+        }elseif (http_request::isPost('webhook')) {
+            $this->webhook = $formClean->simpleClean($_POST['webhook']);
         }
         if (http_request::isPost('callback')) {
             $this->callback = $formClean->simpleClean($_POST['callback']);
@@ -92,21 +98,14 @@ class plugins_mollie_public extends plugins_mollie_db
         return $this->getItems('root',NULL,'one',false);
     }
     /**
-     * Update data
-     * @param $data
-     * @throws Exception
+     * Insert data
+     * @param string $type
+     * @param array $params
      */
-    private function add($data)
-    {
-        switch ($data['type']) {
+    private function add(string $type, array $params) {
+        switch ($type) {
             case 'history':
-                parent::insert(
-                    array(
-                        'context' => $data['context'],
-                        'type' => $data['type']
-                    ),
-                    $data['data']
-                );
+                parent::insert($type, $params);
                 break;
         }
     }
@@ -128,12 +127,12 @@ class plugins_mollie_public extends plugins_mollie_db
     }*/
 
     /**
-     * @param $setConfig
-     * @return array
+     * @param array $setConfig
+     * @return string[]
      */
-    private function setUrl($setConfig){
+    private function setUrl(array $setConfig) :array{
         $baseUrl = http_url::getUrl();
-        $lang = $this->getlang;
+        $lang = $this->lang;
         $setConfig['plugin'] = isset($setConfig['plugin']) ? $setConfig['plugin'] : false;
 
         if($setConfig['plugin']) {
@@ -151,11 +150,12 @@ class plugins_mollie_public extends plugins_mollie_db
             }
             isset($this->redirect) ? '&redirect='.$this->redirect : '';
             // ----- todo voir pour redirectUrl
-            return array(
+            return [
                 'webhookUrl' => $callback . '?webhook=true',
                 'redirectUrl' => $url . '?order='.$this->order.$redirect
-            );
+            ];
         }
+        return [];
     }
 
     /**
@@ -211,7 +211,7 @@ class plugins_mollie_public extends plugins_mollie_db
      * @param $config
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function captureOrder($config){
+    public function captureOrder($config) :array{
 
         $data = $this->setItemsAccount();
         $this->mollie->setApiKey($data['apikey']);
@@ -234,13 +234,13 @@ class plugins_mollie_public extends plugins_mollie_db
                     'status' => 'paid'
                 ];
 
-                $this->add(array(
-                    'type' => 'history',
-                    'data' => array(
-                        'order_h' => $payment->metadata->order,
-                        'status_h' => 'paid'
-                    )
-                ));
+                $this->add(
+                    'history',
+                        [
+                            'order_h' => $payment->metadata->order,
+                            'status_h' => 'paid'
+                        ]
+                );
 
             } //elseif ($payment->isOpen()) {
             /*
@@ -251,13 +251,14 @@ class plugins_mollie_public extends plugins_mollie_db
                 /*
                  * The payment is pending.
                  */
-                $this->add(array(
-                    'type' => 'history',
-                    'data' => array(
+
+                $this->add(
+                    'history',
+                    [
                         'order_h' => $payment->metadata->order,
                         'status_h' => 'pending'
-                    )
-                ));
+                    ]
+                );
                 $getPayment = [
                     'status' => 'pending'
                 ];
@@ -265,13 +266,14 @@ class plugins_mollie_public extends plugins_mollie_db
                 /*
                  * The payment has failed.
                  */
-                $this->add(array(
-                    'type' => 'history',
-                    'data' => array(
+                $this->add(
+                    'history',
+                    [
                         'order_h' => $payment->metadata->order,
                         'status_h' => 'failed'
-                    )
-                ));
+                    ]
+                );
+
                 $getPayment = [
                     'status' => 'failed'
                 ];
@@ -279,13 +281,13 @@ class plugins_mollie_public extends plugins_mollie_db
                 /*
                  * The payment is expired.
                  */
-                $this->add(array(
-                    'type' => 'history',
-                    'data' => array(
+                $this->add(
+                    'history',
+                    [
                         'order_h' => $payment->metadata->order,
                         'status_h' => 'expired'
-                    )
-                ));
+                    ]
+                );
                 $getPayment = [
                     'status' => 'expired'
                 ];
@@ -293,13 +295,13 @@ class plugins_mollie_public extends plugins_mollie_db
                 /*
                  * The payment has been canceled.
                  */
-                $this->add(array(
-                    'type' => 'history',
-                    'data' => array(
+                $this->add(
+                    'history',
+                    [
                         'order_h' => $payment->metadata->order,
                         'status_h' => 'canceled'
-                    )
-                ));
+                    ]
+                );
                 $getPayment = [
                     'status' => 'canceled'
                 ];
@@ -317,20 +319,20 @@ class plugins_mollie_public extends plugins_mollie_db
             $logger = new debug_logger(MP_LOG_DIR);
             $logger->log('php', 'error', 'An error has occured : '.$e->getMessage(), debug_logger::LOG_MONTH);
         }
-
+        return [];
     }
 
     /**
      * @return array
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function getMethod(){
+    public function getMethod() :array{
 
         $data = $this->setItemsAccount();
         $this->mollie->setApiKey($data['apikey']);
         $methods = $this->mollie->methods->allActive();
 
-        $newData = array();
+        $newData = [];
         foreach ($methods as $key => $value){
             $newData[$key]['id'] = $value->id;
             $newData[$key]['description'] = $value->description;
@@ -339,22 +341,24 @@ class plugins_mollie_public extends plugins_mollie_db
         }
         return $newData;
     }
+
     /**
-     * Send a mail
-     * @param $email
-     * @param $tpl
-     * @return bool
+     * @param string $email
+     * @param string $tpl
+     * @param array $data
+     * @param bool $file
+     * @return bool|void
      */
-    protected function send_email($email, $tpl, $data, $file = false) {
+    protected function send_email(string $email,string $tpl, array $data = [], bool $file = false) {
         if($email) {
             $this->template->configLoad();
             if(!$this->sanitize->mail($email)) {
                 $this->message->json_post_response(false,'error_mail');
             }
             else {
-                if($this->getlang) {
+                if($this->lang) {
                     $contact = new plugins_contact_public();
-                    $sender = $contact->getSender();
+                    $sender = $contact->getContact();
 
                     if(!empty($sender) && !empty($email)) {
                         $allowed_hosts = array_map(function($dom) { return $dom['url_domain']; },$this->modelDomain->getValidDomains());
@@ -363,8 +367,10 @@ class plugins_mollie_public extends plugins_mollie_db
                             exit;
                         }
                         $noreply = 'noreply@'.str_replace('www.','',$_SERVER['HTTP_HOST']);
+                        $this->settings = new frontend_model_setting($this->template);
+                        $from = $this->settings->getSetting('mail_sender');
 
-                        return $this->mail->send_email($email,$tpl,$data,'',$noreply,$sender['mail_sender'],$file);
+                        return $this->mail->send_email($email,$tpl,$data,'',$noreply,$from['value']);
                     }
                     else {
                         $this->message->json_post_response(false,'error_plugin');
@@ -374,7 +380,7 @@ class plugins_mollie_public extends plugins_mollie_db
             }
         }
     }
-    public function getPaymentStatus(){
+    public function getPaymentStatus() : string{
         $mollie = $this->getItems('lastHistory',NULL,'one',false);
         return $mollie['status_h'];
     }
@@ -401,23 +407,23 @@ class plugins_mollie_public extends plugins_mollie_db
                         break;
                 }
 
-                header("location:/$this->getlang/cartpay/order/?step=done_step&status=$status");
+                header("location:/$this->lang/cartpay/order/?step=done_step&status=$status");
             }else{
                 $mollie = $this->getItems('history',array('order_h'=>$_GET['order']),'one',false);
                 $this->template->assign('mollie',$mollie);
 
                 if(isset($this->redirect)){
                     $baseUrl = http_url::getUrl();
-                    header( "Refresh: 3;URL=$baseUrl/$this->getlang/$this->redirect/" );
+                    header( "Refresh: 3;URL=$baseUrl/$this->lang/$this->redirect/" );
                 }
                 $this->template->display('mollie/index.tpl');
             }
 
-        }elseif(isset($_GET['webhook'])){
+        }elseif(isset($this->webhook)){
 
             $getPayment = $this->captureOrder(
                 array(
-                    'debug'=>false
+                    'debug'=> false
                 )
             );
 
@@ -429,22 +435,24 @@ class plugins_mollie_public extends plugins_mollie_db
                 foreach ($getPayment['metadata'] as $key => $value){
                     $result[$key] = $value;
                 }
-                /*$log = new debug_logger(MP_LOG_DIR);
+
+                $log = new debug_logger(MP_LOG_DIR);
                 $log->tracelog('start payment');
                 $log->tracelog(json_encode($result));
-                $log->tracelog('sleep');*/
+                $log->tracelog($result['email']);
+                $log->tracelog('sleep');
 
                 if(isset($result['email'])){
-                    //$log->tracelog('email true');
+                    $log->tracelog('email true');
                     $about = new frontend_model_about($this->template);
                     $collection = $about->getCompanyData();
                     //$collection['contact']['mail']
                     $this->send_email($result['email'], 'admin', $result);
-                    if(isset($collection['contact']['mail']) && !empty($collection['contact']['mail'])){
+                    /*if(isset($collection['contact']['mail']) && !empty($collection['contact']['mail'])){
                         $this->send_email($collection['contact']['mail'], 'admin', $result);
-                    }
+                    }*/
                 }else{
-                    //$log->tracelog('email false');
+                    $log->tracelog('email false');
                 }
             }
 
@@ -485,7 +493,7 @@ class plugins_mollie_public extends plugins_mollie_db
                 $collection = $this->about->getCompanyData();
 
                 // config data for payment
-                $config = array(
+                $config = [
                     'plugin' => 'mollie',
                     'setName' => $this->template->getConfigVars('order_on') . ' ' . $collection['name'],
                     'amount' => $this->purchase['amount'],
@@ -493,7 +501,7 @@ class plugins_mollie_public extends plugins_mollie_db
                     //'order' => $this->order,
                     'quantity' => isset($this->custom['quantity']) ? $this->custom['quantity'] : 1,
                     'debug' => false//pre,none,printer
-                );
+                ];
                 //print_r($config);
                 $this->createPayment($config);
             }

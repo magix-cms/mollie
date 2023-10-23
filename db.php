@@ -7,102 +7,118 @@ class plugins_mollie_db
      * @return mixed|null
      * @throws Exception
      */
-    public function fetchData($config, $params = false)
-    {
-        if (!is_array($config)) return '$config must be an array';
+    /**
+     * @var debug_logger $logger
+     */
+    protected debug_logger $logger;
 
-        $sql = '';
-
+    /**
+     * @param array $config
+     * @param array $params
+     * @return array|bool
+     */
+    public function fetchData(array $config, array $params = []) {
         if ($config['context'] === 'all') {
             switch ($config['type']) {
                 case 'data':
-                    $sql = 'SELECT mo.* FROM mc_mollie AS mo';
+                    $query = 'SELECT mo.* FROM mc_mollie AS mo';
                     break;
+                default:
+                    return false;
             }
 
-            return $sql ? component_routing_db::layer()->fetchAll($sql, $params) : null;
+            try {
+                return component_routing_db::layer()->fetchAll($query, $params);
+            }
+            catch (Exception $e) {
+                if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+                $this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+            }
         }
         elseif ($config['context'] === 'one') {
             switch ($config['type']) {
                 case 'root':
-                    $sql = 'SELECT * FROM mc_mollie ORDER BY id_mollie DESC LIMIT 0,1';
+                    $query = 'SELECT * FROM mc_mollie ORDER BY id_mollie DESC LIMIT 0,1';
                     break;
                 case 'history':
-                    $sql = 'SELECT * FROM mc_mollie_history WHERE order_h = :order_h';
+                    $query = 'SELECT * FROM mc_mollie_history WHERE order_h = :order_h';
                     break;
                 case 'lastHistory':
-                    $sql = 'SELECT * FROM mc_mollie_history ORDER BY id_mollie_h DESC LIMIT 0,1';
+                    $query = 'SELECT * FROM mc_mollie_history ORDER BY id_mollie_h DESC LIMIT 0,1';
                     break;
+                default:
+                    return false;
             }
 
-            return $sql ? component_routing_db::layer()->fetch($sql, $params) : null;
+            try {
+                return component_routing_db::layer()->fetch($query, $params);
+            }
+            catch (Exception $e) {
+                if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+                $this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+            }
         }
+        return false;
     }
     /**
-     * @param $config
+     * @param string $type
      * @param array $params
-     * @throws Exception
+     * @return bool
      */
-    public function insert($config, $params = array())
-    {
-        if (!is_array($config)) return '$config must be an array';
+    public function insert(string $type, array $params = []): bool {
+        switch ($type) {
+            case 'config':
 
-        $sql = '';
-
-        switch ($config['type']) {
-            case 'newConfig':
-
-                $sql = 'INSERT INTO mc_mollie (apikey)
+                $query = 'INSERT INTO mc_mollie (apikey)
                 VALUE(:apikey)';
 
                 break;
             case 'history':
 
-                $sql = 'INSERT INTO mc_mollie_history (order_h,status_h)
+                $query = 'INSERT INTO mc_mollie_history (order_h,status_h)
                 VALUE(:order_h,:status_h)';
 
                 break;
+            default:
+                return false;
         }
 
-        if($sql === '') return 'Unknown request asked';
-
         try {
-            component_routing_db::layer()->insert($sql,$params);
+            component_routing_db::layer()->insert($query,$params);
             return true;
         }
         catch (Exception $e) {
-            return 'Exception reçue : '.$e->getMessage();
+            if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+            $this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+            return false;
         }
 
     }
 
     /**
-     * @param $config
+     * @param string $type
      * @param array $params
-     * @throws Exception
+     * @return bool
      */
-    public function update($config, $params = array())
-    {
-        if (!is_array($config)) return '$config must be an array';
-
-        $sql = '';
-
-        switch ($config['type']) {
+    public function update(string $type, array $params = []): bool {
+        switch ($type) {
             case 'config':
-                $sql = 'UPDATE mc_mollie
+                $query = 'UPDATE mc_mollie
                     SET apikey=:apikey
                     WHERE id_mollie=:id';
                 break;
+            default:
+                return false;
         }
 
-        if($sql === '') return 'Unknown request asked';
-
         try {
-            component_routing_db::layer()->update($sql,$params);
+            component_routing_db::layer()->update($query,$params);
             return true;
         }
         catch (Exception $e) {
-            return 'Exception reçue : '.$e->getMessage();
+            if(!isset($this->logger)) $this->logger = new debug_logger(MP_LOG_DIR);
+            $this->logger->log('statement','db',$e->getMessage(),$this->logger::LOG_MONTH);
+            return false;
         }
     }
 }
